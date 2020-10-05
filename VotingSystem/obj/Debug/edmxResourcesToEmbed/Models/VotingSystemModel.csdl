@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="VotingSystemModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="VotingSystemEntities" p1:LazyLoadingEnabled="true">
+    <EntitySet Name="Decisions" EntityType="VotingSystemModel.Decision" />
+    <EntitySet Name="Users" EntityType="VotingSystemModel.User" />
+    <EntitySet Name="Votes" EntityType="VotingSystemModel.Vote" />
+    <AssociationSet Name="FK_Vote_Decision" Association="VotingSystemModel.FK_Vote_Decision">
+      <End Role="Decision" EntitySet="Decisions" />
+      <End Role="Vote" EntitySet="Votes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Vote_User" Association="VotingSystemModel.FK_Vote_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Vote" EntitySet="Votes" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Decision">
+    <Key>
+      <PropertyRef Name="DecisionID" />
+    </Key>
+    <Property Name="DecisionID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <NavigationProperty Name="Votes" Relationship="VotingSystemModel.FK_Vote_Decision" FromRole="Decision" ToRole="Vote" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="UserFullName" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+    <Property Name="UserName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="UserPassword" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
+    <Property Name="IsAdmin" Type="Boolean" />
+    <NavigationProperty Name="Votes" Relationship="VotingSystemModel.FK_Vote_User" FromRole="User" ToRole="Vote" />
+  </EntityType>
+  <EntityType Name="Vote">
+    <Key>
+      <PropertyRef Name="VoteID" />
+    </Key>
+    <Property Name="VoteID" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="Int32" />
+    <Property Name="DecisionID" Type="Int32" />
+    <Property Name="Vote1" Type="Int32" />
+    <NavigationProperty Name="Decision" Relationship="VotingSystemModel.FK_Vote_Decision" FromRole="Vote" ToRole="Decision" />
+    <NavigationProperty Name="User" Relationship="VotingSystemModel.FK_Vote_User" FromRole="Vote" ToRole="User" />
+  </EntityType>
+  <Association Name="FK_Vote_Decision">
+    <End Role="Decision" Type="VotingSystemModel.Decision" Multiplicity="0..1" />
+    <End Role="Vote" Type="VotingSystemModel.Vote" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Decision">
+        <PropertyRef Name="DecisionID" />
+      </Principal>
+      <Dependent Role="Vote">
+        <PropertyRef Name="DecisionID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Vote_User">
+    <End Role="User" Type="VotingSystemModel.User" Multiplicity="0..1" />
+    <End Role="Vote" Type="VotingSystemModel.Vote" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="Vote">
+        <PropertyRef Name="UserID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

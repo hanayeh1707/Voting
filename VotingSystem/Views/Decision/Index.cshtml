@@ -1,0 +1,56 @@
+﻿@model IEnumerable<VotingSystem.Models.Decision>
+
+@{
+    ViewBag.Title = "Decisions";
+}
+
+<h2>Decisions List </h2>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayName("Decision")
+        </th>
+        <th>
+            @Html.DisplayName("Result")
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+                @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @{ 
+                double Result=0; 
+                if(item.Votes.Count()>0)
+                {
+                double NoAgreeVotes= item.Votes.Count(V=>V.Vote1==1) ;
+                double NoTotalvotes= item.Votes.Count();
+                Result = NoAgreeVotes / NoTotalvotes * 100; 
+               
+                }
+            }
+           
+             @Html.DisplayName(Result+"%")
+            
+        </td>
+        <td>
+            @Html.ActionLink("Vote","Vote","Vote", new { decisionID=item.DecisionID, userID=int.Parse(Session["LoggedInUserID"].ToString())},null) 
+        </td>
+    </tr>
+}
+
+</table>
+<br />
+<br />
+
+@using (VotingSystem.Models.VotingSystemEntities db = new VotingSystem.Models.VotingSystemEntities())
+{
+    int UID=int.Parse(Session["LoggedInUserID"].ToString());
+
+    if (db.Users.Where(U => U.UserID ==UID ).FirstOrDefault().IsAdmin== true)
+    { 
+     @Html.ActionLink("Add New Decision", "create"); 
+    }
+}

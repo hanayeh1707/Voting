@@ -1,0 +1,84 @@
+﻿@model VotingSystem.Models.Vote
+
+@{
+    ViewBag.Title = "Vote";
+}
+
+<h2>Vote</h2>
+
+
+@using(Ajax.BeginForm("Vote",new AjaxOptions{HttpMethod = "Post", OnSuccess = "Loaded"}))
+{
+    if (@ViewBag.ErrorMessage != null)
+    { 
+      <div style="border:1px solid red">
+        @ViewBag.ErrorMessage
+      </div>
+    }
+
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Vote</legend>
+
+        @Html.HiddenFor(model => model.VoteID)
+
+        @Html.HiddenFor(model => model.UserID)
+       
+        @Html.HiddenFor(model => model.DecisionID)
+      
+        <div class="editor-label">
+            @Html.DisplayFor(model => model.Decision.Description)
+        </div>
+      
+        <div class="editor-field">
+       
+          <table>
+            <tr>
+                <td> Agree </td>
+                <td>  @Html.RadioButtonFor(model => model.Vote1,1,"Agree")  </td>
+            </tr>
+            <tr>
+                <td>Disagree</td>
+                <td>  @Html.RadioButtonFor(model => model.Vote1,2,"Disagree")</td>
+
+            </tr>
+            <tr>
+                <td>Abstain</td>
+                <td> @Html.RadioButtonFor(model => model.Vote1,0,"Abstain")</td>
+            </tr>
+        </table>   
+             
+        </div>
+
+
+        <p>
+            <input type="submit" value="Vote" />
+        </p>
+    </fieldset>
+}
+  <br />
+  <div id="AgreeVotes" style="border:1px solid black"> 
+       @Html.Action("getAgreeVotesCount", new { DecisionID = Model.DecisionID }) Agree Votes for This Decision
+  </div> <br />
+  <div id="DisagreeVotes" style="border:1px solid black">   
+        @Html.Action("getDisagreeVotesCount", new { DecisionID = Model.DecisionID }) Disagree Votes for This Decision
+  </div>
+
+<script type="text/javascript">
+
+    function Loaded(JSONResult)
+    {
+        $("#AgreeVotes").html(JSONResult.AgreeVotes +'  Agree Votes for This Decision');
+        $("#DisagreeVotes").html(JSONResult.DisagreeVotes +'  Disagree Votes for This Decision');
+    }
+
+</script>
+<br />
+ <div>
+    @Html.ActionLink("Back to The Decisions List", "Index","Decision")
+ </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
